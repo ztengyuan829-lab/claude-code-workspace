@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>管理｜おかえりの食卓</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Jost:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="../app.css">
+<script src="../config.js"></script>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap wrap--wide head__in">
+    <a class="head__name" href="../">おかえりの食卓 <span class="head__sub">管理</span></a>
+    <button type="button" class="head__back" id="logout" hidden>ログアウト</button>
+  </div>
+</header>
+
+<main class="wrap wrap--wide">
+  <div id="setup" class="setup" hidden>
+    準備がまだ終わっていません。<code>config.js</code> に Supabase の URL と anon key を入れてください。
+  </div>
+
+  <!-- ログイン -->
+  <section id="login-view" hidden>
+    <p class="eyebrow">Admin</p>
+    <h1>管理画面</h1>
+    <p class="lead">開催日の登録と、予約の確認ができます。</p>
+    <form class="card" id="login-form" novalidate style="max-width:26rem">
+      <label class="field" for="email">
+        <span class="field__label">メールアドレス</span>
+        <input type="email" id="email" autocomplete="username" required>
+      </label>
+      <label class="field" for="password">
+        <span class="field__label">パスワード</span>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </label>
+      <div class="btn-row">
+        <button type="submit" class="btn" id="login-btn">ログイン</button>
+      </div>
+      <div id="login-error" class="msg msg--bad" hidden></div>
+    </form>
+  </section>
+
+  <!-- 管理 -->
+  <section id="admin-view" hidden>
+    <div class="bar">
+      <div>
+        <p class="eyebrow">Admin</p>
+        <h1 style="margin:0">おかえりの食卓</h1>
+      </div>
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" id="tab-res" role="tab" aria-selected="true">予約一覧</button>
+        <button type="button" class="tab" id="tab-ev" role="tab" aria-selected="false">開催日</button>
+      </div>
+    </div>
+
+    <!-- 予約一覧 -->
+    <div id="panel-res">
+      <div id="res-list"></div>
+    </div>
+
+    <!-- 開催日 -->
+    <div id="panel-ev" hidden>
+      <div class="card">
+        <h2>開催日をふやす</h2>
+        <form id="event-form" novalidate>
+          <div class="row">
+            <label class="field" for="ev-date">
+              <span class="field__label">日にち <span class="req">必須</span></span>
+              <input type="date" id="ev-date" required>
+            </label>
+            <label class="field" for="ev-start">
+              <span class="field__label">開始</span>
+              <input type="time" id="ev-start" value="17:00" step="900">
+            </label>
+            <label class="field" for="ev-end">
+              <span class="field__label">終了</span>
+              <input type="time" id="ev-end" value="20:00" step="900">
+            </label>
+          </div>
+          <label class="field" for="ev-note">
+            <span class="field__label">ひとこと <span class="opt">任意</span></span>
+            <input type="text" id="ev-note" placeholder="この日の献立、会場が違う日、など">
+          </label>
+          <div class="btn-row">
+            <button type="submit" class="btn" id="ev-btn">登録する</button>
+            <span class="muted" id="ev-state"></span>
+          </div>
+          <div id="ev-error" class="msg msg--bad" hidden></div>
+        </form>
+      </div>
+      <div class="eventlist" id="ev-list"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap wrap--wide">おかえりの食卓 管理画面</div></footer>
+
+<script>
+(function(){
+"use strict";
+var CFG = window.OKAERI_CONFIG || {};
+var $ = function(id){ return document.getElementById(id); };
+var KEY = "okaeri.session";
+var session = null, events = [], reservations = [];
+
+if(!CFG.url || !CFG.anonKey){ $("setup").hidden = false; return; }
+var BASE = CFG.url.replace(/\/+$/,"");
+
+/* ---------- 小道具 ---------- */
+function pad(n){ return (n<10?"0":"") + n; }
+function hhmm(t){ return t ? String(t).slice(0,5) : "—"; }
+function jpDate(iso){
+  var p = String(iso).split("-");
+  var d = new Date(+p[0], +p[1]-1, +p[2]);
+  var w = ["日","月","火","水","木","金","土"][d.getDay()];
+  return (+p[1]) + "月" + (+p[2]) + "日（" + w + "）";
+}
+function todayISO(){ var d=new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function show(el,msg){ el.textContent = msg; el.hidden = !msg; }
+
+/* ---------- 認証 ---------- */
+function saveSession(s){
+  session = s;
+  try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+}
+function clearSession(){
+  session = null;
+  try{ localStorage.removeItem(KEY); }catch(e){}
+}
+function loadSession(){
+  try{ return JSON.parse(localStorage.getItem(KEY) || "null"); }catch(e){ return null; }
+}
+function authFetch(path, opts){
+  opts = opts || {};
+  var h = opts.headers || {};
+  h["apikey"] = CFG.anonKey;
+  h["Authorization"] = "Bearer " + (session && session.access_token);
+  opts.headers = h;
+  return fetch(BASE + "/rest/v1/" + path, opts);
+}
+function signIn(email, password){
+  return fetch(BASE + "/auth/v1/token?grant_type=password", {
+    method:"POST",
+    headers:{ "apikey": CFG.anonKey, "Content-Type":"application/json" },
+    body: JSON.stringify({ email: email, password: password })
+  }).then(function(r){
+    return r.json().then(function(j){
+      if(!r.ok) throw new Error(j.error_description || j.msg || j.message || "login_failed");
+      return j;
+    });
+  });
+}
+function refresh(token){
+  return fetch(BASE + "/auth/v1/token?grant_type=refresh_token", {
+    method:"POST",
+    headers:{ "apikey": CFG.anonKey, "Content-Type":"application/json" },
+    body: JSON.stringify({ refresh_token: token })
+  }).then(function(r){ if(!r.ok) throw new Error("refresh_failed"); return r.json(); });
+}
+
+/* ---------- 読み込み ---------- */
+function loadAll(){
+  return Promise.all([
+    authFetch("events?select=*&order=date.desc").then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); }),
+    authFetch("reservations?select=*&order=arrive_time.asc").then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+  ]).then(function(res){
+    events = res[0] || [];
+    reservations = res[1] || [];
+    renderRes();
+    renderEvents();
+  });
+}
+
+/* ---------- 予約一覧 ---------- */
+function forEvent(id){
+  return reservations.filter(function(r){ return r.event_id === id; });
+}
+function renderRes(){
+  var host = $("res-list");
+  if(!events.length){
+    host.innerHTML = '<div class="card"><p class="empty">まだ開催日がありません。「開催日」から登録してください。</p></div>';
+    return;
+  }
+  var today = todayISO();
+  var html = events.map(function(ev){
+    var rs = forEvent(ev.id);
+    var adults = rs.reduce(function(n,r){ return n + (r.adults||0); },0);
+    var kids   = rs.reduce(function(n,r){ return n + (r.kids||0); },0);
+    var past = ev.date < today;
+    var tally = {};
+    rs.forEach(function(r){ var k = r.source || "未回答"; tally[k] = (tally[k]||0) + 1; });
+    var tallyHtml = Object.keys(tally).map(function(k){
+      return '<span class="tally__item">' + esc(k) + '<span class="tally__n">' + tally[k] + '</span></span>';
+    }).join("");
+
+    var rows = rs.map(function(r){
+      return "<tr>"
+        + '<td class="num">' + hhmm(r.arrive_time) + "</td>"
+        + "<td>" + esc(r.name) + "</td>"
+        + '<td class="num">' + (r.adults||0) + "／" + (r.kids||0) + "</td>"
+        + '<td class="num">' + esc(r.phone) + "</td>"
+        + '<td><span class="pill">' + esc(r.source || "未回答") + "</span></td>"
+        + '<td class="wrap-cell">' + esc(r.note || "") + "</td>"
+        + '<td><button type="button" class="btn btn--small btn--danger" data-del-res="' + r.id + '">取消</button></td>'
+        + "</tr>";
+    }).join("");
+
+    return '<article class="event' + (past ? " event--past" : "") + '">'
+      + '<div class="event__head">'
+      +   "<div><span class=\"event__date\">" + jpDate(ev.date) + "</span>"
+      +   ' <span class="event__time">' + hhmm(ev.start_time) + "〜" + hhmm(ev.end_time) + "</span>"
+      +   (ev.closed ? ' <span class="pill">受付停止</span>' : "")
+      +   "</div>"
+      +   '<div class="event__count">予約 ' + rs.length + " 件／おとな " + adults + "・こども " + kids
+      +   "　合計 " + (adults+kids) + " 名</div>"
+      + "</div>"
+      + '<div class="event__body">'
+      + (rs.length
+          ? '<div class="tbl-scroll"><table class="list"><thead><tr>'
+            + "<th>時間</th><th>お名前</th><th>おとな／こども</th><th>電話</th><th>きっかけ</th><th>ひとこと</th><th></th>"
+            + "</tr></thead><tbody>" + rows + "</tbody></table></div>"
+            + '<div class="tally">' + tallyHtml + "</div>"
+            + '<div class="btn-row"><button type="button" class="btn btn--ghost btn--small" data-csv="' + ev.id + '">この日の一覧をCSVで保存</button></div>'
+          : '<p class="empty">まだ予約はありません。</p>')
+      + "</div></article>";
+  }).join("");
+  host.innerHTML = '<div class="eventlist">' + html + "</div>";
+}
+
+/* ---------- 開催日 ---------- */
+function renderEvents(){
+  var host = $("ev-list");
+  if(!events.length){ host.innerHTML = '<p class="empty">まだ登録がありません。</p>'; return; }
+  var today = todayISO();
+  host.innerHTML = events.map(function(ev){
+    var n = forEvent(ev.id).length;
+    return '<article class="event' + (ev.date < today ? " event--past" : "") + '"><div class="event__head">'
+      + '<div><span class="event__date">' + jpDate(ev.date) + "</span>"
+      + ' <span class="event__time">' + hhmm(ev.start_time) + "〜" + hhmm(ev.end_time) + "</span>"
+      + (ev.note ? ' <span class="muted">' + esc(ev.note) + "</span>" : "")
+      + (ev.closed ? ' <span class="pill">受付停止</span>' : "")
+      + "</div>"
+      + '<div class="btn-row" style="margin:0">'
+      +   '<button type="button" class="btn btn--ghost btn--small" data-toggle="' + ev.id + '">'
+      +     (ev.closed ? "受付を再開" : "受付を止める") + "</button>"
+      +   '<button type="button" class="btn btn--small btn--danger" data-del-ev="' + ev.id + '">削除</button>'
+      + "</div></div>"
+      + '<div class="event__body"><p class="muted" style="margin:0">予約 ' + n + " 件</p></div></article>";
+  }).join("");
+}
+
+/* ---------- CSV ---------- */
+function downloadCsv(evId){
+  var ev = events.filter(function(e){ return e.id === evId; })[0];
+  var rs = forEvent(evId);
+  var head = ["時間","お名前","おとな","こども","電話番号","きっかけ","ひとこと"];
+  var lines = [head].concat(rs.map(function(r){
+    return [hhmm(r.arrive_time), r.name, r.adults||0, r.kids||0, r.phone, r.source||"", (r.note||"").replace(/\n/g," ")];
+  }));
+  var csv = lines.map(function(row){
+    return row.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(",");
+  }).join("\r\n");
+  var blob = new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "okaeri-" + ev.date + ".csv";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+/* ---------- 操作 ---------- */
+document.addEventListener("click", function(e){
+  var t = e.target.closest ? e.target.closest("[data-del-res],[data-del-ev],[data-toggle],[data-csv]") : null;
+  if(!t) return;
+  var id;
+  if((id = t.getAttribute("data-csv"))) return downloadCsv(id);
+  if((id = t.getAttribute("data-del-res"))){
+    if(!confirm("この予約を取り消します。よろしいですか。")) return;
+    authFetch("reservations?id=eq." + id, {method:"DELETE"}).then(loadAll);
+    return;
+  }
+  if((id = t.getAttribute("data-del-ev"))){
+    if(!confirm("この開催日を削除します。ひもづく予約も消えます。よろしいですか。")) return;
+    authFetch("events?id=eq." + id, {method:"DELETE"}).then(loadAll);
+    return;
+  }
+  if((id = t.getAttribute("data-toggle"))){
+    var ev = events.filter(function(x){ return x.id === id; })[0];
+    authFetch("events?id=eq." + id, {
+      method:"PATCH",
+      headers:{ "Content-Type":"application/json", "Prefer":"return=minimal" },
+      body: JSON.stringify({ closed: !ev.closed })
+    }).then(loadAll);
+  }
+});
+
+$("tab-res").addEventListener("click", function(){
+  $("tab-res").setAttribute("aria-selected","true");
+  $("tab-ev").setAttribute("aria-selected","false");
+  $("panel-res").hidden = false; $("panel-ev").hidden = true;
+});
+$("tab-ev").addEventListener("click", function(){
+  $("tab-ev").setAttribute("aria-selected","true");
+  $("tab-res").setAttribute("aria-selected","false");
+  $("panel-ev").hidden = false; $("panel-res").hidden = true;
+});
+
+$("event-form").addEventListener("submit", function(e){
+  e.preventDefault();
+  show($("ev-error"), "");
+  var date = $("ev-date").value;
+  if(!date){ return show($("ev-error"), "日にちを入れてください。"); }
+  $("ev-btn").disabled = true; $("ev-state").textContent = "登録しています…";
+  authFetch("events", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Prefer":"return=minimal" },
+    body: JSON.stringify({
+      date: date,
+      start_time: $("ev-start").value || null,
+      end_time: $("ev-end").value || null,
+      note: $("ev-note").value.trim() || null
+    })
+  }).then(function(r){
+    if(!r.ok) throw new Error(r.status);
+    $("ev-date").value = ""; $("ev-note").value = "";
+    $("ev-state").textContent = "登録しました";
+    setTimeout(function(){ $("ev-state").textContent = ""; }, 2500);
+    return loadAll();
+  }).catch(function(){
+    show($("ev-error"), "登録できませんでした。同じ日がすでにあるか、通信に失敗しています。");
+    $("ev-state").textContent = "";
+  }).then(function(){ $("ev-btn").disabled = false; });
+});
+
+$("login-form").addEventListener("submit", function(e){
+  e.preventDefault();
+  show($("login-error"), "");
+  $("login-btn").disabled = true;
+  signIn($("email").value.trim(), $("password").value)
+    .then(function(s){ saveSession(s); enter(); })
+    .catch(function(){ show($("login-error"), "ログインできませんでした。メールアドレスとパスワードを確かめてください。"); })
+    .then(function(){ $("login-btn").disabled = false; });
+});
+$("logout").addEventListener("click", function(){
+  clearSession();
+  $("admin-view").hidden = true;
+  $("login-view").hidden = false;
+  $("logout").hidden = true;
+});
+
+/* ---------- 起動 ---------- */
+function enter(){
+  $("login-view").hidden = true;
+  $("admin-view").hidden = false;
+  $("logout").hidden = false;
+  loadAll().catch(function(){
+    clearSession();
+    $("admin-view").hidden = true;
+    $("login-view").hidden = false;
+    $("logout").hidden = true;
+    show($("login-error"), "もう一度ログインしてください。");
+  });
+}
+var saved = loadSession();
+if(saved && saved.refresh_token){
+  refresh(saved.refresh_token)
+    .then(function(s){ saveSession(s); enter(); })
+    .catch(function(){ clearSession(); $("login-view").hidden = false; });
+} else {
+  $("login-view").hidden = false;
+}
+})();
+</script>
+</body>
+</html>

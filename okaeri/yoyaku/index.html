@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>参加を申し込む｜おかえりの食卓</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Jost:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="../app.css">
+<script src="../config.js"></script>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap head__in">
+    <a class="head__name" href="../">おかえりの食卓</a>
+    <a class="head__back" href="../">← 案内ページにもどる</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="setup" class="setup" hidden>
+    準備がまだ終わっていません。<code>config.js</code> に Supabase の URL と anon key を入れてください。
+  </div>
+
+  <div id="form-view">
+    <p class="eyebrow">Reservation</p>
+    <h1>参加を申し込む</h1>
+    <p class="lead">席とごはんの準備のために使います。書いていただいた内容は主宰だけが見ます。<br>
+      当日ふらっと来ていただいても大丈夫です。</p>
+
+    <form id="form" class="card" novalidate>
+      <label class="field" for="event">
+        <span class="field__label">来られる日 <span class="req">必須</span></span>
+        <select id="event" name="event" required>
+          <option value="">読み込んでいます…</option>
+        </select>
+        <p class="field__hint" id="event-hint"></p>
+      </label>
+
+      <label class="field" for="arrive">
+        <span class="field__label">だいたい何時ごろ <span class="req">必須</span></span>
+        <select id="arrive" name="arrive" required>
+          <option value="">先に日にちを選んでください</option>
+        </select>
+        <p class="field__hint">ぴったりでなくて大丈夫です。前後しても問題ありません。</p>
+      </label>
+
+      <label class="field" for="name">
+        <span class="field__label">お名前 <span class="req">必須</span></span>
+        <input type="text" id="name" name="name" required autocomplete="name" placeholder="熱田 直美">
+      </label>
+
+      <label class="field" for="phone">
+        <span class="field__label">電話番号 <span class="req">必須</span></span>
+        <input type="tel" id="phone" name="phone" required autocomplete="tel" inputmode="tel" placeholder="090-1234-5678">
+        <p class="field__hint">当日どうしても連絡が必要なときだけ使います。</p>
+      </label>
+
+      <div class="field">
+        <span class="field__label">人数 <span class="opt">任意</span></span>
+        <div class="row">
+          <label for="adults"><span class="muted">おとな</span>
+            <input type="number" id="adults" name="adults" min="0" max="20" value="1" inputmode="numeric"></label>
+          <label for="kids"><span class="muted">こども</span>
+            <input type="number" id="kids" name="kids" min="0" max="20" value="0" inputmode="numeric"></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field__label">どこで知りましたか <span class="req">必須</span></span>
+        <div class="choices" id="sources">
+          <label class="choice"><input type="radio" name="source" value="Instagram" required> Instagram</label>
+          <label class="choice"><input type="radio" name="source" value="掲示板"> 掲示板</label>
+          <label class="choice"><input type="radio" name="source" value="チラシ"> チラシ</label>
+          <label class="choice"><input type="radio" name="source" value="知人から"> 知人から聞いて</label>
+          <label class="choice"><input type="radio" name="source" value="その他"> その他</label>
+        </div>
+      </div>
+
+      <label class="field" for="note">
+        <span class="field__label">伝えておきたいこと <span class="opt">任意</span></span>
+        <textarea id="note" name="note" placeholder="アレルギー、ベビーカーで行きます、など"></textarea>
+      </label>
+
+      <div class="btn-row">
+        <button type="submit" class="btn" id="submit">この内容で申し込む</button>
+        <span class="muted" id="state"></span>
+      </div>
+      <div id="error" class="msg msg--bad" hidden></div>
+    </form>
+  </div>
+
+  <div id="done-view" class="done" hidden>
+    <div class="done__mark">🍚</div>
+    <h1>お待ちしています。</h1>
+    <p class="lead" id="done-detail"></p>
+    <p class="muted">変更やキャンセルは、Instagram の DM でお知らせください。<br>
+      連絡がなくても、来られなくなって大丈夫です。</p>
+    <div class="btn-row" style="justify-content:center">
+      <a class="btn btn--ghost" href="../">案内ページにもどる</a>
+    </div>
+  </div>
+</main>
+
+<footer class="foot"><div class="wrap">おかえりの食卓</div></footer>
+
+<script>
+(function(){
+"use strict";
+var CFG = window.OKAERI_CONFIG || {};
+var $ = function(id){ return document.getElementById(id); };
+var events = [];
+
+if(!CFG.url || !CFG.anonKey){
+  $("setup").hidden = false;
+  $("form-view").hidden = true;
+  return;
+}
+
+function api(path, opts){
+  opts = opts || {};
+  var h = opts.headers || {};
+  h["apikey"] = CFG.anonKey;
+  h["Authorization"] = "Bearer " + CFG.anonKey;
+  opts.headers = h;
+  return fetch(CFG.url.replace(/\/+$/,"") + "/rest/v1/" + path, opts);
+}
+function pad(n){ return (n<10?"0":"") + n; }
+function hhmm(t){ return t ? String(t).slice(0,5) : ""; }
+function jpDate(iso){
+  var p = String(iso).split("-");
+  var d = new Date(+p[0], +p[1]-1, +p[2]);
+  var w = ["日","月","火","水","木","金","土"][d.getDay()];
+  return (+p[1]) + "月" + (+p[2]) + "日（" + w + "）";
+}
+function todayISO(){
+  var d = new Date();
+  return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+}
+function fail(msg){
+  var e = $("error");
+  e.textContent = msg;
+  e.hidden = false;
+}
+
+/* ---- 開催日を読み込む ---- */
+api("events?select=id,date,start_time,end_time,note&closed=eq.false&date=gte." + todayISO() + "&order=date.asc")
+  .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(function(rows){
+    events = rows || [];
+    var sel = $("event");
+    sel.innerHTML = "";
+    if(!events.length){
+      sel.innerHTML = '<option value="">いまは予定が出ていません</option>';
+      $("event-hint").textContent = "次の開催が決まると、ここに出ます。Instagram でもお知らせしています。";
+      $("submit").disabled = true;
+      return;
+    }
+    sel.appendChild(new Option("選んでください",""));
+    events.forEach(function(ev){
+      var label = jpDate(ev.date);
+      if(ev.start_time) label += "　" + hhmm(ev.start_time) + "〜" + hhmm(ev.end_time || "");
+      sel.appendChild(new Option(label, ev.id));
+    });
+  })
+  .catch(function(){
+    $("event").innerHTML = '<option value="">読み込めませんでした</option>';
+    $("event-hint").textContent = "通信がうまくいきませんでした。時間をおいて開き直してください。";
+  });
+
+/* ---- 日にちに合わせて時間の選択肢を作る ---- */
+$("event").addEventListener("change", function(){
+  var ev = events.filter(function(e){ return e.id === $("event").value; })[0];
+  var sel = $("arrive");
+  sel.innerHTML = "";
+  if(!ev){ sel.appendChild(new Option("先に日にちを選んでください","")); return; }
+  $("event-hint").textContent = ev.note || "";
+  var s = hhmm(ev.start_time) || "17:00", e = hhmm(ev.end_time) || "20:00";
+  var from = (+s.slice(0,2))*60 + (+s.slice(3,5));
+  var to   = (+e.slice(0,2))*60 + (+e.slice(3,5));
+  if(to <= from) to = from + 180;
+  sel.appendChild(new Option("選んでください",""));
+  for(var m = from; m <= to; m += 30){
+    var t = pad(Math.floor(m/60)) + ":" + pad(m%60);
+    sel.appendChild(new Option(t + " ごろ", t));
+  }
+});
+
+/* ---- 送信 ---- */
+$("form").addEventListener("submit", function(e){
+  e.preventDefault();
+  $("error").hidden = true;
+  var eventId = $("event").value;
+  var arrive  = $("arrive").value;
+  var name    = $("name").value.trim();
+  var phone   = $("phone").value.trim();
+  var src     = document.querySelector('input[name="source"]:checked');
+
+  if(!eventId) return fail("来られる日を選んでください。");
+  if(!arrive)  return fail("だいたいの時間を選んでください。");
+  if(!name)    return fail("お名前を入れてください。");
+  if(phone.replace(/[^0-9]/g,"").length < 10) return fail("電話番号を確かめてください。ハイフンはあってもなくても大丈夫です。");
+  if(!src)     return fail("どこで知ったかを選んでください。");
+
+  $("submit").disabled = true;
+  $("state").textContent = "送っています…";
+
+  api("reservations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Prefer": "return=minimal" },
+    body: JSON.stringify({
+      event_id: eventId,
+      name: name,
+      phone: phone,
+      arrive_time: arrive,
+      adults: Math.max(0, parseInt($("adults").value, 10) || 0),
+      kids: Math.max(0, parseInt($("kids").value, 10) || 0),
+      source: src.value,
+      note: $("note").value.trim() || null
+    })
+  }).then(function(r){
+    if(!r.ok) throw new Error(r.status);
+    var ev = events.filter(function(x){ return x.id === eventId; })[0];
+    $("done-detail").textContent = jpDate(ev.date) + "　" + arrive + " ごろ／" + name + " 様";
+    $("form-view").hidden = true;
+    $("done-view").hidden = false;
+    window.scrollTo(0,0);
+  }).catch(function(){
+    $("submit").disabled = false;
+    $("state").textContent = "";
+    fail("送信できませんでした。通信を確かめてもう一度お試しください。何度も失敗するときは Instagram の DM でお知らせください。");
+  });
+});
+})();
+</script>
+</body>
+</html>
