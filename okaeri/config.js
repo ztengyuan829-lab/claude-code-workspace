@@ -2,6 +2,6 @@
 // anon key はブラウザに公開される前提のキーなので、ここに書いて問題ない。
 // service_role キーは絶対にここに書かないこと。
 window.OKAERI_CONFIG = {
-  url: "",      // 例: https://abcdefghijklm.supabase.co
+  url: "https://zgbgqedyvpbtznywcasq.supabase.co",
   anonKey: ""   // 例: eyJhbGciOi... で始まる長い文字列
 };
