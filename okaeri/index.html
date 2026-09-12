@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>おかえりの食卓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Jost:wght@300;400;500&family=Playfair+Display:ital,wght@1,500;1,600&display=swap">
+<style id="page-style">
+:root{
+  --ink:#1C2B40;
+  --ink-soft:#5A6B80;
+  --ground:#FAF7EF;
+  --surface:#FFFFFF;
+  --accent:#4A6B43;
+  --accent-ink:#3E5C38;
+  --glow:#D9A441;
+  --line:rgba(28,43,64,.15);
+  --line-soft:rgba(28,43,64,.09);
+  --sky-a:#16233A;
+  --sky-b:#33445C;
+  --shadow:0 18px 40px -28px rgba(28,43,64,.45);
+  --mincho:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --wordmark:"Playfair Display","Zen Old Mincho",Georgia,serif;
+  --gothic:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --latin:"Jost","Zen Kaku Gothic New",sans-serif;
+  --gut:clamp(1rem,5vw,2.5rem);
+  --band:clamp(3.5rem,9vw,6.5rem);
+  --measure:36em;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#EDE7DA;--ink-soft:#A6B0BE;--ground:#121A26;--surface:#1A2432;
+    --accent:#9CBE93;--accent-ink:#AFCEA6;--glow:#E0B76A;
+    --line:rgba(237,231,218,.17);--line-soft:rgba(237,231,218,.09);
+    --sky-a:#0C1420;--sky-b:#26344A;--shadow:0 18px 40px -28px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#EDE7DA;--ink-soft:#A6B0BE;--ground:#121A26;--surface:#1A2432;
+  --accent:#9CBE93;--accent-ink:#AFCEA6;--glow:#E0B76A;
+  --line:rgba(237,231,218,.17);--line-soft:rgba(237,231,218,.09);
+  --sky-a:#0C1420;--sky-b:#26344A;--shadow:0 18px 40px -28px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--gothic);
+  font-size:clamp(.95rem,.4vw + .88rem,1.0625rem);line-height:1.95;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.wrap{width:100%;max-width:70rem;margin-inline:auto;padding-inline:var(--gut)}
+.measure{max-width:var(--measure)}
+
+.site-head{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft)}
+.site-head__in{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:.85rem}
+.site-head__brand{display:flex;align-items:center;gap:.75rem;min-width:0}
+.mark{display:flex;align-items:baseline;gap:.6rem;text-decoration:none;min-width:0}
+.mark__img{height:2.4rem;width:auto;display:block;align-self:center;border-radius:50%}
+.mark__name{font-family:var(--wordmark);font-style:italic;font-weight:600;font-size:1.35rem;
+  letter-spacing:.01em;color:var(--accent-ink)}
+.mark__tools{gap:.4rem}
+.mark__sub{font-size:.72rem;letter-spacing:.18em;color:var(--ink-soft)}
+.nav{display:flex;gap:clamp(.9rem,2.2vw,1.75rem);font-size:.82rem;letter-spacing:.06em}
+.nav a{text-decoration:none;color:var(--ink-soft);padding-block:.2rem;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.nav a:hover{color:var(--ink);border-color:var(--glow)}
+@media (max-width:700px){.mark__sub{display:none}.nav{display:none}}
+
+.hero{padding-block:clamp(1.75rem,4.5vw,3.25rem) var(--band)}
+.hero__grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.eyebrow{font-family:var(--latin);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--ink-soft);display:flex;align-items:center;gap:.8rem;margin:0 0 1.4rem}
+.eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--glow),transparent);max-width:7rem}
+.hero__title{font-family:var(--mincho);font-weight:500;font-feature-settings:"palt";
+  font-size:clamp(2.05rem,5.6vw,3.5rem);line-height:1.45;letter-spacing:.02em;margin:0 0 1.6rem;text-wrap:balance}
+.hero__lead{font-family:var(--mincho);font-size:clamp(1rem,1.4vw,1.2rem);line-height:2.15;margin:0 0 1.2rem}
+.hero__note{margin:0 0 2rem;color:var(--ink-soft);font-size:.93rem;max-width:26em}
+.cta-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.btn{display:inline-block;text-decoration:none;font-size:.88rem;letter-spacing:.06em;
+  padding:.72rem 1.5rem;border-radius:999px;border:1px solid var(--accent);
+  transition:transform .18s ease,background-color .18s,color .18s}
+.btn--solid{background:var(--accent);color:var(--ground)}
+.btn--ghost{color:var(--accent-ink)}
+.btn:hover{transform:translateY(-2px)}
+.btn--ghost:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+
+.lamp{position:relative;aspect-ratio:4/5;width:100%;max-width:23rem;margin:0 0 0 auto;
+  border-radius:180px 180px 14px 14px;overflow:hidden;
+  background:linear-gradient(180deg,var(--sky-a),var(--sky-b));box-shadow:var(--shadow)}
+.lamp__light{position:absolute;inset:8%;border-radius:150px 150px 8px 8px;
+  background:radial-gradient(120% 90% at 50% 78%,#F6D6A4 0%,#E9B276 42%,#C98B55 74%,#8C6446 100%);
+  animation:breathe 7s ease-in-out infinite}
+.lamp__bars{position:absolute;inset:8%;border-radius:150px 150px 8px 8px;background:
+  linear-gradient(90deg,transparent calc(50% - 1.5px),rgba(40,30,22,.55) calc(50% - 1.5px),rgba(40,30,22,.55) calc(50% + 1.5px),transparent calc(50% + 1.5px)),
+  linear-gradient(180deg,transparent calc(46% - 1.5px),rgba(40,30,22,.55) calc(46% - 1.5px),rgba(40,30,22,.55) calc(46% + 1.5px),transparent calc(46% + 1.5px))}
+.lamp__word{position:absolute;top:22%;left:50%;transform:translateX(-50%);writing-mode:vertical-rl;
+  font-family:var(--mincho);font-weight:500;font-size:clamp(1.3rem,2.6vw,1.9rem);letter-spacing:.36em;
+  color:#2E2116;text-shadow:0 1px 0 rgba(255,244,226,.5)}
+.lamp__cap{position:absolute;left:0;right:0;bottom:0;padding:1rem 1.1rem;
+  background:linear-gradient(180deg,transparent,rgba(10,14,20,.78));color:#EFE7DA;font-size:.78rem;letter-spacing:.12em;text-align:center}
+@keyframes breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.09)}}
+@media (prefers-reduced-motion:reduce){.lamp__light{animation:none}.btn:hover{transform:none}}
+@media (max-width:860px){.hero__grid{grid-template-columns:1fr}.lamp{max-width:20rem;margin-inline:auto;aspect-ratio:3/4}}
+
+.exchange{background:var(--surface);border-block:1px solid var(--line-soft)}
+.exchange__in{display:flex;align-items:center;justify-content:center;gap:clamp(1rem,4vw,3rem);
+  padding-block:clamp(2rem,5vw,3rem);flex-wrap:wrap;text-align:center}
+.exchange__word{font-family:var(--mincho);font-size:clamp(1.3rem,3.4vw,2.1rem);letter-spacing:.12em;margin:0}
+.exchange__word span{display:block;font-family:var(--latin);font-size:.66rem;letter-spacing:.26em;color:var(--ink-soft);margin-top:.4rem;text-transform:uppercase}
+.exchange__arc{width:clamp(3rem,12vw,8rem);height:1px;background:linear-gradient(90deg,var(--line),var(--glow),var(--line));flex:0 0 auto}
+
+.statement{padding-block:clamp(3rem,7vw,5rem)}
+.statement__in{display:flex;flex-direction:column;align-items:center;gap:1.75rem;text-align:center}
+.statement__wick{width:1px;height:clamp(2rem,5vw,3.25rem);background:linear-gradient(180deg,transparent,var(--glow));flex:0 0 auto}
+.statement__mark{height:clamp(5.5rem,13vw,9.5rem);width:auto;display:block;border-radius:6px}
+.statement__text{font-family:var(--mincho);font-size:clamp(1.1rem,2.1vw,1.5rem);line-height:2.3;
+  letter-spacing:.05em;margin:0;max-width:32em;text-wrap:balance}
+
+.section{padding-block:var(--band)}
+.section--surface{background:var(--surface);border-block:1px solid var(--line-soft)}
+.section__title{font-family:var(--mincho);font-weight:500;font-feature-settings:"palt";
+  font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.6;letter-spacing:.03em;margin:0 0 1.5rem;text-wrap:balance}
+.prose p{margin:0 0 1.35rem}
+.prose p:last-child{margin-bottom:0}
+
+.split{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(1.75rem,5vw,3.5rem);align-items:start}
+@media (max-width:820px){.split{grid-template-columns:1fr}}
+.photo{position:relative;aspect-ratio:4/5;border-radius:4px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(90% 70% at 50% 20%,color-mix(in srgb,var(--glow) 30%,transparent),transparent 70%),var(--ground);
+  display:grid;place-content:center;gap:.4rem;text-align:center;color:var(--ink-soft);max-width:22rem}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;grid-area:1/1}
+.photo--wide{aspect-ratio:16/7;max-width:100%;margin-top:2.25rem}
+.measure-wide{max-width:46rem}
+.photo__hint{font-size:.78rem;letter-spacing:.14em}
+.photo__sub{font-family:var(--latin);font-size:.66rem;letter-spacing:.2em}
+
+.namecard{margin:0 0 1.75rem;padding:0 0 1.25rem;border-bottom:1px solid var(--line)}
+.namecard__role{font-family:var(--latin);font-size:.72rem;letter-spacing:.24em;color:var(--ink-soft);text-transform:uppercase}
+.namecard__name{font-family:var(--mincho);font-size:clamp(1.5rem,3.2vw,2rem);letter-spacing:.06em;margin:.35rem 0 .2rem}
+.namecard__jp{font-size:.86rem;color:var(--ink-soft);letter-spacing:.08em}
+.facts{list-style:none;margin:1.75rem 0 0;padding:0;display:grid;gap:.55rem;font-size:.9rem}
+.facts li{display:flex;gap:.8rem;align-items:baseline;color:var(--ink-soft)}
+.facts li::before{content:"";width:.4rem;height:.4rem;flex:0 0 auto;border-radius:50%;background:var(--accent);transform:translateY(-.15rem)}
+
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-top:2.5rem}
+.pillar{background:var(--ground);padding:clamp(1.5rem,3vw,2.25rem)}
+.pillar__kanji{font-family:var(--mincho);font-size:clamp(2rem,4.5vw,2.75rem);line-height:1;color:var(--accent-ink)}
+.pillar__read{font-family:var(--latin);font-size:.66rem;letter-spacing:.26em;color:var(--ink-soft);margin:.7rem 0 1rem;text-transform:uppercase}
+.pillar__copy{font-family:var(--mincho);font-size:1.02rem;line-height:1.95;margin:0 0 .7rem}
+.pillar__note{font-size:.86rem;color:var(--ink-soft);margin:0}
+@media (max-width:760px){.pillars{grid-template-columns:1fr}}
+
+.works{display:grid;margin-top:2.5rem;border-top:1px solid var(--line)}
+.work{display:grid;grid-template-columns:1fr auto;gap:clamp(1rem,3vw,2.5rem);align-items:start;
+  padding-block:clamp(1.4rem,3vw,2rem);border-bottom:1px solid var(--line)}
+.work__name{font-family:var(--mincho);font-size:clamp(1.1rem,2.2vw,1.4rem);letter-spacing:.04em;margin:0 0 .5rem}
+.work__desc{margin:0;color:var(--ink-soft);font-size:.92rem;max-width:34em}
+.work__side{display:flex;flex-direction:column;align-items:flex-end;gap:.6rem}
+.work__tag{font-size:.72rem;letter-spacing:.14em;color:var(--ink-soft);white-space:nowrap;
+  border:1px solid var(--line);border-radius:999px;padding:.25rem .8rem}
+@media (max-width:700px){.work{grid-template-columns:1fr}.work__side{align-items:flex-start;margin-top:.7rem}}
+
+.info{width:100%;border-collapse:collapse;margin-top:2rem;font-size:.92rem}
+.info th,.info td{text-align:left;padding:.95rem 0;border-bottom:1px solid var(--line);vertical-align:top}
+.info th{width:8.5rem;font-weight:500;color:var(--ink-soft);letter-spacing:.1em;font-size:.82rem}
+.info td.info__act{width:3.5rem;text-align:right}
+.blank{color:var(--ink-soft);border-bottom:1px dashed var(--glow);padding-bottom:1px}
+.table-scroll{overflow-x:auto}
+
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin-top:2.25rem}
+.linkcard{display:flex;flex-direction:column;gap:.3rem;text-decoration:none;padding:1.25rem 1.4rem;
+  border:1px solid var(--line);border-radius:3px;background:var(--ground);transition:border-color .2s,transform .2s}
+.linkcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.linkcard__label{font-family:var(--latin);font-size:.68rem;letter-spacing:.24em;color:var(--ink-soft);text-transform:uppercase}
+.linkcard__handle{font-size:1.05rem;letter-spacing:.04em}
+.linkcard__desc{font-size:.84rem;color:var(--ink-soft)}
+
+.site-foot{border-top:1px solid var(--line);padding-block:2.5rem;font-size:.8rem;color:var(--ink-soft)}
+.site-foot__in{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:baseline}
+.site-foot__co{font-family:var(--latin);letter-spacing:.16em}
+.mark__img{max-height:2.6rem}
+
+/* ---------- 編集モード ---------- */
+.editlink{display:none;background:none;border:0;padding:0;font:inherit;font-size:.78rem;color:var(--ink-soft);
+  cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.editlink:hover{color:var(--accent-ink)}
+body.can-edit .editlink{display:inline}
+
+.editbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;align-items:center;gap:.75rem;flex-wrap:wrap;
+  padding:.7rem var(--gut);background:var(--ink);color:var(--ground);font-size:.82rem;
+  box-shadow:0 -10px 30px -20px rgba(0,0,0,.6)}
+body.editing .editbar{display:flex}
+body.editing{padding-bottom:5rem}
+.editbar__label{font-family:var(--latin);letter-spacing:.2em;text-transform:uppercase;font-size:.7rem;opacity:.75}
+.editbar__hint{opacity:.75}
+.editbar__status{margin-left:auto;opacity:.9}
+.editbar__spacer{flex:1}
+.btn-sm{font:inherit;font-size:.82rem;padding:.45rem 1.1rem;border-radius:999px;cursor:pointer;
+  border:1px solid color-mix(in srgb,var(--ground) 45%,transparent);background:transparent;color:var(--ground)}
+.btn-sm--solid{background:var(--glow);border-color:var(--glow);color:#23180D}
+.btn-sm[disabled]{opacity:.5;cursor:default}
+
+body.editing [data-e]{outline:1px dashed color-mix(in srgb,var(--ink) 30%,transparent);outline-offset:4px;
+  border-radius:2px;cursor:text;min-width:2rem;display:inline-block}
+body.editing p[data-e],body.editing h1[data-e],body.editing h2[data-e],body.editing h3[data-e],body.editing td[data-e]{display:block}
+body.editing [data-e]:focus{outline:2px solid var(--accent);background:color-mix(in srgb,var(--glow) 14%,transparent)}
+
+.hrefbox{display:none;align-items:center;gap:.5rem;width:100%;margin-top:.5rem;font-size:.78rem;color:var(--ink-soft)}
+body.editing .hrefbox{display:flex}
+.hrefbox input{flex:1;min-width:0;font:inherit;font-size:.78rem;padding:.4rem .6rem;border:1px solid var(--line);
+  border-radius:3px;background:var(--surface);color:var(--ink)}
+
+.editing-only{display:none}
+body.editing .editing-only{display:inline-flex}
+.rowbtn{font:inherit;font-size:.72rem;letter-spacing:.08em;padding:.25rem .75rem;border-radius:999px;
+  border:1px dashed var(--line);background:transparent;color:var(--ink-soft);cursor:pointer;align-items:center;gap:.3rem}
+.rowbtn:hover{border-style:solid;border-color:var(--accent);color:var(--accent-ink)}
+.addrow{margin-top:1rem}
+.logopick{display:none;flex-direction:column;align-items:center;gap:.5rem}
+body.editing .logopick{display:flex}
+.logopick__box{display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:4.5rem;min-width:11rem;padding:.9rem 1.2rem;border:1px dashed var(--glow);border-radius:4px;
+  color:var(--ink-soft);font-size:.78rem;letter-spacing:.1em;cursor:pointer}
+.logopick__box:hover{border-style:solid;color:var(--accent-ink)}
+.photo__tools{position:absolute;left:0;right:0;bottom:0;display:none;gap:.5rem;justify-content:center;
+  padding:.6rem;background:linear-gradient(180deg,transparent,rgba(10,14,20,.7))}
+body.editing .photo__tools{display:flex}
+.photo__tools .rowbtn{background:rgba(255,253,248,.93);color:#1C2B40;border-color:transparent}
+.noscript{padding:2rem var(--gut);text-align:center;color:var(--ink-soft)}
+
+/* ---------- 食卓のページ固有 ---------- */
+.section__title{font-family:var(--gothic);font-weight:700;letter-spacing:.02em;
+  font-size:clamp(1.3rem,2.7vw,1.8rem);line-height:1.7}
+.hero{padding-block:clamp(2rem,5vw,3.5rem) clamp(2rem,5vw,3rem)}
+.hero__in{max-width:44rem}
+.hero__title{font-size:clamp(1.9rem,5vw,3rem);line-height:1.5;margin-bottom:1rem}
+.hero__lead{margin-bottom:1.5rem}
+.hero__note{max-width:34em}
+.btn{border-radius:10px}
+
+.next{padding-block:0 var(--band)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:clamp(1.4rem,4vw,2.4rem);box-shadow:var(--shadow)}
+.card__title{font-family:var(--gothic);font-weight:700;font-size:clamp(1.15rem,2.4vw,1.5rem);
+  line-height:1.6;margin:0 0 1.5rem;letter-spacing:.02em}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:0}
+.slot{background:var(--surface);padding:1rem 1.1rem}
+.slot dt{font-size:.72rem;letter-spacing:.16em;color:var(--ink-soft);margin:0 0 .4rem}
+.slot dd{margin:0;font-size:1.05rem;font-weight:500;font-variant-numeric:tabular-nums}
+.card__note{margin:1.5rem 0 0;font-size:.88rem;color:var(--ink-soft)}
+
+.points{list-style:none;padding:0;margin:2.5rem 0 0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem}
+.point{display:flex;flex-direction:column;gap:.5rem;padding:1.25rem 1.4rem;
+  border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  font-size:.9rem;color:var(--ink-soft)}
+.point__icon{font-family:var(--gothic);font-weight:700;font-size:1.05rem;color:var(--accent-ink)}
+
+.faq{display:grid;margin-top:2.25rem;border-top:1px solid var(--line)}
+.qa{padding-block:clamp(1.2rem,2.5vw,1.7rem);border-bottom:1px solid var(--line)}
+.qa__q,.qa__a{display:flex;gap:.75rem;margin:0;align-items:baseline}
+.qa__q{font-weight:700;font-size:1.02rem;margin-bottom:.6rem}
+.qa__a{color:var(--ink-soft);font-size:.94rem;max-width:42em}
+.qa__mark{font-family:var(--latin);font-size:.85rem;letter-spacing:.1em;color:var(--accent-ink);
+  flex:0 0 auto;width:1rem}
+.qa__mark--a{color:var(--glow)}
+
+.host__note{margin:1.75rem 0 .75rem;font-size:.88rem;color:var(--ink-soft);max-width:40em}
+.host__link a{color:var(--accent-ink);text-underline-offset:3px}
+.measure-wide{max-width:46rem}
+</style>
+</head>
+<body>
+<div id="app"><a id="top"></a><header class="site-head"><div class="wrap site-head__in"><a class="mark" href="#top"><span class="mark__name" data-e="brand.name">おかえりの食卓</span><span class="mark__sub" data-e="brand.sub">地域食堂</span></a><nav class="nav" aria-label="サイト内"><a href="#about" data-e="nav.0.label">どんなところ</a><a href="#next" data-e="nav.1.label">次回の開催</a><a href="#faq" data-e="nav.2.label">よくある質問</a><a href="#access" data-e="nav.3.label">場所</a><a href="#contact" data-e="nav.4.label">お問い合わせ</a></nav></div></header><main><section class="hero wrap"><div class="hero__in"><p class="eyebrow" data-e="hero.eyebrow">地域食堂 おかえりの食卓</p><h1 class="hero__title" data-e="hero.title">おなかがすいたら、<br>来てください。</h1><p class="hero__lead" data-e="hero.lead">それだけで、十分な理由です。</p><p class="hero__note" data-e="hero.note">子どもも大人も、ひとりでも家族でも。事情を話さなくていいし、何も持ってこなくて大丈夫です。</p><div class="cta-row"><a class="btn btn--solid" href="#contact" data-e="hero.ctaA.label">参加を申し込む</a><a class="btn btn--ghost" href="#faq" data-e="hero.ctaB.label">よくある質問</a><span class="hrefbox"><label for="f-hero-ctaA-href">申し込みボタンのリンク先（予約フォームのURL）</label><input id="f-hero-ctaA-href" type="url" data-h="hero.ctaA.href" value="#contact"></span></div></div></section><section class="next" id="next"><div class="wrap"><div class="card"><p class="eyebrow" data-e="next.eyebrow">次回の開催</p><h2 class="card__title" data-e="next.title">次はこの日にひらきます。</h2><dl class="slots"><div class="slot"><dt data-e="next.rows.0.label">日にち</dt><dd data-e="next.rows.0.value"><span class="blank">　　月　　日（　）</span></dd><button type="button" class="rowbtn editing-only" data-rm="next.rows|0">✕</button></div><div class="slot"><dt data-e="next.rows.1.label">時間</dt><dd data-e="next.rows.1.value"><span class="blank">　　:　　 〜 　　:　　</span></dd><button type="button" class="rowbtn editing-only" data-rm="next.rows|1">✕</button></div><div class="slot"><dt data-e="next.rows.2.label">場所</dt><dd data-e="next.rows.2.value"><span class="blank">会場名を記入</span></dd><button type="button" class="rowbtn editing-only" data-rm="next.rows|2">✕</button></div><div class="slot"><dt data-e="next.rows.3.label">参加費</dt><dd data-e="next.rows.3.value"><span class="blank">こども　　円／おとな　　円</span></dd><button type="button" class="rowbtn editing-only" data-rm="next.rows|3">✕</button></div><div class="slot"><dt data-e="next.rows.4.label">ごはん</dt><dd data-e="next.rows.4.value"><span class="blank">献立を記入</span></dd><button type="button" class="rowbtn editing-only" data-rm="next.rows|4">✕</button></div></dl><button type="button" class="rowbtn editing-only addrow" data-add="next.rows">＋ 項目を追加</button><p class="card__note" data-e="next.note">席とごはんの準備があるので、来られそうな方はお知らせいただけると助かります。当日ふらっとでも大丈夫です。</p></div></div></section><section class="section wrap" id="about"><p class="eyebrow" data-e="about.eyebrow">どんなところ</p><div class="split"><div class="photo " data-photo="about.photo"><span class="photo__hint">食卓の写真</span><span class="photo__sub">photo here</span><div class="photo__tools"><label class="rowbtn" for="f-about-photo-file">写真を選ぶ<input id="f-about-photo-file" type="file" accept="image/*" data-file="about.photo" data-fmt="jpeg" style="display:none"></label></div></div><div><h2 class="section__title" data-e="about.title">ごはんを一緒に食べる。それだけの場所です。</h2><div class="prose measure"><p data-e="about.paras.0">名前を言わなくても、また来てくれたことが分かる。帰るときに「またね」と言い合える。そういう場所を目指しています。</p><button type="button" class="rowbtn editing-only" data-rm="about.paras|0">この段落を削除</button><p data-e="about.paras.1">来た人が「ただいま」と言えて、私たちが「おかえり」と返せる。それがこの食卓の名前の由来です。</p><button type="button" class="rowbtn editing-only" data-rm="about.paras|1">この段落を削除</button><button type="button" class="rowbtn editing-only addrow" data-add="about.paras">＋ 段落を追加</button></div></div></div><ul class="points"><li class="point"><span class="point__icon" data-e="about.points.0.icon">誰でも</span><span data-e="about.points.0.text">こども・おとな・おとしより。住んでいる場所も、事情も聞きません。</span><button type="button" class="rowbtn editing-only" data-rm="about.points|0">✕</button></li><li class="point"><span class="point__icon" data-e="about.points.1.icon">ひとりでも</span><span data-e="about.points.1.text">おひとりで来る方がいちばん多いくらいです。席は用意してあります。</span><button type="button" class="rowbtn editing-only" data-rm="about.points|1">✕</button></li><li class="point"><span class="point__icon" data-e="about.points.2.icon">手ぶらで</span><span data-e="about.points.2.text">持ってくるものはありません。エプロンも上履きも要りません。</span><button type="button" class="rowbtn editing-only" data-rm="about.points|2">✕</button></li></ul><button type="button" class="rowbtn editing-only addrow" data-add="about.points">＋ 項目を追加</button></section><section class="section section--surface" id="faq"><div class="wrap"><p class="eyebrow" data-e="faq.eyebrow">よくある質問</p><h2 class="section__title" data-e="faq.title">はじめての方へ。</h2><div class="faq"><div class="qa"><p class="qa__q"><span class="qa__mark">Q</span><span data-e="faq.items.0.q">ひとりで行っても大丈夫ですか？</span></p><p class="qa__a"><span class="qa__mark qa__mark--a">A</span><span data-e="faq.items.0.a">大丈夫です。おひとりでいらっしゃる方がいちばん多いくらいです。着いたら声をかけてください、席にご案内します。</span></p><button type="button" class="rowbtn editing-only" data-rm="faq.items|0">この質問を削除</button></div><div class="qa"><p class="qa__q"><span class="qa__mark">Q</span><span data-e="faq.items.1.q">予約は必要ですか？</span></p><p class="qa__a"><span class="qa__mark qa__mark--a">A</span><span data-e="faq.items.1.a">なくても入れます。ただ、ごはんの量と席の準備があるので、来られそうな日が分かっていたら教えていただけると助かります。</span></p><button type="button" class="rowbtn editing-only" data-rm="faq.items|1">この質問を削除</button></div><div class="qa"><p class="qa__q"><span class="qa__mark">Q</span><span data-e="faq.items.2.q">子どもだけで行ってもいいですか？</span></p><p class="qa__a"><span class="qa__mark qa__mark--a">A</span><span data-e="faq.items.2.a"><span class="blank">回答を記入してください（お子さんだけの参加を受けるか、年齢の目安など）。</span></span></p><button type="button" class="rowbtn editing-only" data-rm="faq.items|2">この質問を削除</button></div><div class="qa"><p class="qa__q"><span class="qa__mark">Q</span><span data-e="faq.items.3.q">アレルギーがあります。</span></p><p class="qa__a"><span class="qa__mark qa__mark--a">A</span><span data-e="faq.items.3.a">お申し込みのときに教えてください。できるかぎり対応します。難しいときは正直にお伝えします。</span></p><button type="button" class="rowbtn editing-only" data-rm="faq.items|3">この質問を削除</button></div><div class="qa"><p class="qa__q"><span class="qa__mark">Q</span><span data-e="faq.items.4.q">何か持っていくものはありますか？</span></p><p class="qa__a"><span class="qa__mark qa__mark--a">A</span><span data-e="faq.items.4.a">何も要りません。手ぶらでいらしてください。</span></p><button type="button" class="rowbtn editing-only" data-rm="faq.items|4">この質問を削除</button></div><div class="qa"><p class="qa__q"><span class="qa__mark">Q</span><span data-e="faq.items.5.q">手伝いたいのですが。</span></p><p class="qa__a"><span class="qa__mark qa__mark--a">A</span><span data-e="faq.items.5.a"><span class="blank">回答を記入してください（お手伝いの受け入れ、食材や寄付の受け付けについて）。</span></span></p><button type="button" class="rowbtn editing-only" data-rm="faq.items|5">この質問を削除</button></div></div><button type="button" class="rowbtn editing-only addrow" data-add="faq.items">＋ 質問を追加</button></div></section><section class="section wrap" id="access"><p class="eyebrow" data-e="access.eyebrow">場所</p><div class="split"><div class="photo " data-photo="access.photo"><span class="photo__hint">会場の写真</span><span class="photo__sub">photo here</span><div class="photo__tools"><label class="rowbtn" for="f-access-photo-file">写真を選ぶ<input id="f-access-photo-file" type="file" accept="image/*" data-file="access.photo" data-fmt="jpeg" style="display:none"></label></div></div><div><h2 class="section__title" data-e="access.title">ここでひらいています。</h2><div class="table-scroll"><table class="info"><tbody><tr><th data-e="access.rows.0.label">会場</th><td data-e="access.rows.0.value"><span class="blank">会場名を記入</span></td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="access.rows|0">✕</button></td></tr><tr><th data-e="access.rows.1.label">住所</th><td data-e="access.rows.1.value"><span class="blank">住所を記入</span></td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="access.rows|1">✕</button></td></tr><tr><th data-e="access.rows.2.label">行き方</th><td data-e="access.rows.2.value"><span class="blank">最寄り駅・バス停からの道順を記入</span></td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="access.rows|2">✕</button></td></tr><tr><th data-e="access.rows.3.label">駐車場</th><td data-e="access.rows.3.value"><span class="blank">あり／なし を記入</span></td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="access.rows|3">✕</button></td></tr></tbody></table></div><button type="button" class="rowbtn editing-only addrow" data-add="access.rows">＋ 行を追加</button><span class="hrefbox"><label for="f-access-map-href">Google マップのURL</label><input id="f-access-map-href" type="url" data-h="access.map.href" value=""></span></div></div></section><section class="section section--surface" id="contact"><div class="wrap"><div class="split"><div><p class="eyebrow" data-e="contact.eyebrow">お問い合わせ・お申し込み</p><h2 class="section__title" data-e="contact.title">聞いてみたい、が<br>はじまりで大丈夫です。</h2><div class="prose"><p data-e="contact.paras.0">参加のお申し込み、アレルギーのご相談、お手伝いのお申し出まで。Instagram の DM がいちばん早く届きます。</p></div><div class="cta-row" style="margin-top:1.5rem"><a class="btn btn--solid" href="https://www.instagram.com/naoon_20/" target="_blank" rel="noopener" data-e="contact.cta.label">Instagram で連絡する</a><span class="hrefbox"><label for="f-contact-cta-href">ボタンのリンク先</label><input id="f-contact-cta-href" type="url" data-h="contact.cta.href" value="https://www.instagram.com/naoon_20/"></span></div></div><div><div class="links"><a class="linkcard" href="https://www.instagram.com/naoon_20/" target="_blank" rel="noopener"><span class="linkcard__label" data-e="contact.links.0.label">Instagram</span><span class="linkcard__handle" data-e="contact.links.0.handle">@naoon_20</span><span class="linkcard__desc" data-e="contact.links.0.desc">開催のお知らせはこちら</span></a><span class="hrefbox"><label for="f-contact-links-0-href">Instagram のリンク先</label><input id="f-contact-links-0-href" type="url" data-h="contact.links.0.href" value="https://www.instagram.com/naoon_20/"></span></div></div></div></div></section><section class="section wrap" id="host"><div class="measure-wide"><p class="eyebrow" data-e="host.eyebrow">主催</p><h2 class="section__title" data-e="host.title">おかえりの食卓について</h2><div class="table-scroll"><table class="info"><tbody><tr><th data-e="host.rows.0.label">名称</th><td data-e="host.rows.0.value">おかえりの食卓</td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="host.rows|0">✕</button></td></tr><tr><th data-e="host.rows.1.label">運営</th><td data-e="host.rows.1.value">任意団体として運営しています</td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="host.rows|1">✕</button></td></tr><tr><th data-e="host.rows.2.label">主宰</th><td data-e="host.rows.2.value">NAOMI ATSUTA</td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="host.rows|2">✕</button></td></tr><tr><th data-e="host.rows.3.label">連絡先</th><td data-e="host.rows.3.value"><span class="blank">メールアドレスを記入</span></td><td class="info__act"><button type="button" class="rowbtn editing-only" data-rm="host.rows|3">✕</button></td></tr></tbody></table></div><button type="button" class="rowbtn editing-only addrow" data-add="host.rows">＋ 行を追加</button><p class="host__note" data-e="host.note">主宰は合同会社 Bloom Terra の代表を務めています。会社としての事業とは別に、地域の活動としてこの食卓をひらいています。</p><p class="host__link"><a href="https://bloomterra.vercel.app" target="_blank" rel="noopener" data-e="host.link.label">合同会社 Bloom Terra のサイト</a></p><span class="hrefbox"><label for="f-host-link-href">会社サイトのURL</label><input id="f-host-link-href" type="url" data-h="host.link.href" value="https://bloomterra.vercel.app"></span></div></section></main><footer class="site-foot"><div class="wrap site-foot__in"><span class="site-foot__co" data-e="footer.co">おかえりの食卓</span><span data-e="footer.tagline">おなかがすいたら、来てください。それだけで、十分な理由です。</span><span data-e="footer.copyright">© 2026 おかえりの食卓</span><button type="button" class="editlink" data-act="edit">このページを編集する</button></div></footer><div class="editbar"><span class="editbar__label">編集モード</span><span class="editbar__hint">文字をクリックすると直接書き換えられます</span><span class="editbar__status"></span><button type="button" class="btn-sm" data-act="cancel">やめる</button><button type="button" class="btn-sm btn-sm--solid" data-act="save">保存して公開</button></div></div>
+<noscript><p class="noscript">このページの表示には JavaScript が必要です。</p></noscript>
+<script id="app-code">
+(function(){
+"use strict";
+
+var FONT_HEAD = '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+  + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+  + '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Jost:wght@300;400;500&family=Playfair+Display:ital,wght@1,500;1,600&display=swap">';
+
+var DEFAULT_DATA = {
+ "brand": {
+  "name": "おかえりの食卓",
+  "sub": "地域食堂",
+  "logo": "",
+  "mark": ""
+ },
+ "nav": [
+  {
+   "label": "どんなところ",
+   "href": "#about"
+  },
+  {
+   "label": "次回の開催",
+   "href": "#next"
+  },
+  {
+   "label": "よくある質問",
+   "href": "#faq"
+  },
+  {
+   "label": "場所",
+   "href": "#access"
+  },
+  {
+   "label": "お問い合わせ",
+   "href": "#contact"
+  }
+ ],
+ "hero": {
+  "eyebrow": "地域食堂 おかえりの食卓",
+  "title": "おなかがすいたら、\n来てください。",
+  "lead": "それだけで、十分な理由です。",
+  "note": "子どもも大人も、ひとりでも家族でも。事情を話さなくていいし、何も持ってこなくて大丈夫です。",
+  "ctaA": {
+   "label": "参加を申し込む",
+   "href": "#contact"
+  },
+  "ctaB": {
+   "label": "よくある質問",
+   "href": "#faq"
+  }
+ },
+ "next": {
+  "eyebrow": "次回の開催",
+  "title": "次はこの日にひらきます。",
+  "rows": [
+   {
+    "label": "日にち",
+    "value": "　　月　　日（　）"
+   },
+   {
+    "label": "時間",
+    "value": "　　:　　 〜 　　:　　"
+   },
+   {
+    "label": "場所",
+    "value": "会場名を記入"
+   },
+   {
+    "label": "参加費",
+    "value": "こども　　円／おとな　　円"
+   },
+   {
+    "label": "ごはん",
+    "value": "献立を記入"
+   }
+  ],
+  "note": "席とごはんの準備があるので、来られそうな方はお知らせいただけると助かります。当日ふらっとでも大丈夫です。"
+ },
+ "about": {
+  "eyebrow": "どんなところ",
+  "title": "ごはんを一緒に食べる。それだけの場所です。",
+  "photo": "",
+  "paras": [
+   "名前を言わなくても、また来てくれたことが分かる。帰るときに「またね」と言い合える。そういう場所を目指しています。",
+   "来た人が「ただいま」と言えて、私たちが「おかえり」と返せる。それがこの食卓の名前の由来です。"
+  ],
+  "points": [
+   {
+    "icon": "誰でも",
+    "text": "こども・おとな・おとしより。住んでいる場所も、事情も聞きません。"
+   },
+   {
+    "icon": "ひとりでも",
+    "text": "おひとりで来る方がいちばん多いくらいです。席は用意してあります。"
+   },
+   {
+    "icon": "手ぶらで",
+    "text": "持ってくるものはありません。エプロンも上履きも要りません。"
+   }
+  ]
+ },
+ "faq": {
+  "eyebrow": "よくある質問",
+  "title": "はじめての方へ。",
+  "items": [
+   {
+    "q": "ひとりで行っても大丈夫ですか？",
+    "a": "大丈夫です。おひとりでいらっしゃる方がいちばん多いくらいです。着いたら声をかけてください、席にご案内します。"
+   },
+   {
+    "q": "予約は必要ですか？",
+    "a": "なくても入れます。ただ、ごはんの量と席の準備があるので、来られそうな日が分かっていたら教えていただけると助かります。"
+   },
+   {
+    "q": "子どもだけで行ってもいいですか？",
+    "a": "回答を記入してください（お子さんだけの参加を受けるか、年齢の目安など）。"
+   },
+   {
+    "q": "アレルギーがあります。",
+    "a": "お申し込みのときに教えてください。できるかぎり対応します。難しいときは正直にお伝えします。"
+   },
+   {
+    "q": "何か持っていくものはありますか？",
+    "a": "何も要りません。手ぶらでいらしてください。"
+   },
+   {
+    "q": "手伝いたいのですが。",
+    "a": "回答を記入してください（お手伝いの受け入れ、食材や寄付の受け付けについて）。"
+   }
+  ]
+ },
+ "access": {
+  "eyebrow": "場所",
+  "title": "ここでひらいています。",
+  "photo": "",
+  "rows": [
+   {
+    "label": "会場",
+    "value": "会場名を記入"
+   },
+   {
+    "label": "住所",
+    "value": "住所を記入"
+   },
+   {
+    "label": "行き方",
+    "value": "最寄り駅・バス停からの道順を記入"
+   },
+   {
+    "label": "駐車場",
+    "value": "あり／なし を記入"
+   }
+  ],
+  "map": {
+   "label": "Google マップで開く",
+   "href": ""
+  }
+ },
+ "contact": {
+  "eyebrow": "お問い合わせ・お申し込み",
+  "title": "聞いてみたい、が\nはじまりで大丈夫です。",
+  "paras": [
+   "参加のお申し込み、アレルギーのご相談、お手伝いのお申し出まで。Instagram の DM がいちばん早く届きます。"
+  ],
+  "cta": {
+   "label": "Instagram で連絡する",
+   "href": "https://www.instagram.com/naoon_20/"
+  },
+  "links": [
+   {
+    "label": "Instagram",
+    "handle": "@naoon_20",
+    "desc": "開催のお知らせはこちら",
+    "href": "https://www.instagram.com/naoon_20/"
+   }
+  ]
+ },
+ "host": {
+  "eyebrow": "主催",
+  "title": "おかえりの食卓について",
+  "rows": [
+   {
+    "label": "名称",
+    "value": "おかえりの食卓"
+   },
+   {
+    "label": "運営",
+    "value": "任意団体として運営しています"
+   },
+   {
+    "label": "主宰",
+    "value": "NAOMI ATSUTA"
+   },
+   {
+    "label": "連絡先",
+    "value": "メールアドレスを記入"
+   }
+  ],
+  "note": "主宰は合同会社 Bloom Terra の代表を務めています。会社としての事業とは別に、地域の活動としてこの食卓をひらいています。",
+  "link": {
+   "label": "合同会社 Bloom Terra のサイト",
+   "href": "https://bloomterra.vercel.app"
+  }
+ },
+ "footer": {
+  "co": "おかえりの食卓",
+  "tagline": "おなかがすいたら、来てください。それだけで、十分な理由です。",
+  "copyright": "© 2026 おかえりの食卓"
+ }
+};
+
+var BLANK_HINTS = ["記入","　　","未定"];
+
+/* ---------- helpers ---------- */
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function ml(s){return esc(s).replace(/\n/g,"<br>");}
+function ed(p){return ' data-e="'+p+'"';}
+function isBlank(v){for(var i=0;i<BLANK_HINTS.length;i++){if(String(v).indexOf(BLANK_HINTS[i])>=0)return true;}return false;}
+function val(v){return isBlank(v)?'<span class="blank">'+ml(v)+"</span>":ml(v);}
+function id4(p){return "f-"+p.replace(/[^A-Za-z0-9]+/g,"-");}
+function getPath(o,p){var ks=p.split("."),c=o;for(var i=0;i<ks.length;i++){if(c==null)return c;c=c[ks[i]];}return c;}
+function setPath(o,p,v){var ks=p.split("."),t=o;for(var i=0;i<ks.length-1;i++){t=t[ks[i]];}t[ks[ks.length-1]]=v;}
+function hrefBox(p,v,label){
+  return '<span class="hrefbox"><label for="'+id4(p)+'">'+esc(label)+"</label>"
+    +'<input id="'+id4(p)+'" type="url" data-h="'+p+'" value="'+esc(v)+'"></span>';
+}
+function rm(p,i,label){return '<button type="button" class="rowbtn editing-only" data-rm="'+p+"|"+i+'">'+esc(label||"削除")+"</button>";}
+function add(p,label){return '<button type="button" class="rowbtn editing-only addrow" data-add="'+p+'">＋ '+esc(label)+"</button>";}
+function photo(p,src,hint,fmt,extra){
+  var inner = src
+    ? '<img src="'+esc(src)+'" alt="">'
+    : '<span class="photo__hint">'+esc(hint)+"</span><span class=\"photo__sub\">photo here</span>";
+  return '<div class="photo '+(extra||"")+'" data-photo="'+p+'">'+inner
+    +'<div class="photo__tools"><label class="rowbtn" for="'+id4(p)+'-file">写真を選ぶ'
+    +'<input id="'+id4(p)+'-file" type="file" accept="image/*" data-file="'+p+'" data-fmt="'+(fmt||"jpeg")+'" style="display:none"></label>'
+    +(src?'<button type="button" class="rowbtn" data-clear="'+p+'">写真を外す</button>':"")
+    +"</div></div>";
+}
+
+/* ---------- render ---------- */
+function renderHead(d){
+  return '<header class="site-head"><div class="wrap site-head__in">'
+    +'<a class="mark" href="#top"><span class="mark__name"'+ed("brand.name")+">"+ml(d.brand.name)+"</span>"
+    +'<span class="mark__sub"'+ed("brand.sub")+">"+ml(d.brand.sub)+"</span></a>"
+    +'<nav class="nav" aria-label="サイト内">'
+    + d.nav.map(function(n,i){return '<a href="'+esc(n.href)+'"'+ed("nav."+i+".label")+">"+ml(n.label)+"</a>";}).join("")
+    +"</nav></div></header>";
+}
+function renderHero(d){
+  var h=d.hero;
+  return '<section class="hero wrap"><div class="hero__in">'
+    +'<p class="eyebrow"'+ed("hero.eyebrow")+">"+ml(h.eyebrow)+"</p>"
+    +'<h1 class="hero__title"'+ed("hero.title")+">"+ml(h.title)+"</h1>"
+    +'<p class="hero__lead"'+ed("hero.lead")+">"+ml(h.lead)+"</p>"
+    +'<p class="hero__note"'+ed("hero.note")+">"+ml(h.note)+"</p>"
+    +'<div class="cta-row"><a class="btn btn--solid" href="'+esc(h.ctaA.href)+'"'+ed("hero.ctaA.label")+">"+ml(h.ctaA.label)+"</a>"
+    +'<a class="btn btn--ghost" href="'+esc(h.ctaB.href)+'"'+ed("hero.ctaB.label")+">"+ml(h.ctaB.label)+"</a>"
+    +hrefBox("hero.ctaA.href",h.ctaA.href,"申し込みボタンのリンク先（予約フォームのURL）")
+    +"</div></div></section>";
+}
+function renderNext(d){
+  var n=d.next;
+  return '<section class="next" id="next"><div class="wrap"><div class="card">'
+    +'<p class="eyebrow"'+ed("next.eyebrow")+">"+ml(n.eyebrow)+"</p>"
+    +'<h2 class="card__title"'+ed("next.title")+">"+ml(n.title)+"</h2>"
+    +'<dl class="slots">'
+    + n.rows.map(function(r,i){
+        return '<div class="slot"><dt'+ed("next.rows."+i+".label")+">"+ml(r.label)+"</dt>"
+          +"<dd"+ed("next.rows."+i+".value")+">"+val(r.value)+"</dd>"
+          +rm("next.rows",i,"✕")+"</div>";
+      }).join("")
+    +"</dl>"+add("next.rows","項目を追加")
+    +'<p class="card__note"'+ed("next.note")+">"+ml(n.note)+"</p>"
+    +"</div></div></section>";
+}
+function renderAbout(d){
+  var a=d.about;
+  return '<section class="section wrap" id="about"><p class="eyebrow"'+ed("about.eyebrow")+">"+ml(a.eyebrow)+"</p>"
+    +'<div class="split">'+photo("about.photo",a.photo,"食卓の写真")+"<div>"
+    +'<h2 class="section__title"'+ed("about.title")+">"+ml(a.title)+"</h2>"
+    +'<div class="prose measure">'
+    + a.paras.map(function(p,i){return "<p"+ed("about.paras."+i)+">"+ml(p)+"</p>"+rm("about.paras",i,"この段落を削除");}).join("")
+    +add("about.paras","段落を追加")+"</div></div></div>"
+    +'<ul class="points">'
+    + a.points.map(function(pt,i){
+        return '<li class="point"><span class="point__icon"'+ed("about.points."+i+".icon")+">"+ml(pt.icon)+"</span>"
+          +"<span"+ed("about.points."+i+".text")+">"+ml(pt.text)+"</span>"+rm("about.points",i,"✕")+"</li>";
+      }).join("")
+    +"</ul>"+add("about.points","項目を追加")+"</section>";
+}
+function renderFaq(d){
+  var f=d.faq;
+  return '<section class="section section--surface" id="faq"><div class="wrap">'
+    +'<p class="eyebrow"'+ed("faq.eyebrow")+">"+ml(f.eyebrow)+"</p>"
+    +'<h2 class="section__title"'+ed("faq.title")+">"+ml(f.title)+"</h2>"
+    +'<div class="faq">'
+    + f.items.map(function(it,i){
+        return '<div class="qa">'
+          +'<p class="qa__q"><span class="qa__mark">Q</span><span'+ed("faq.items."+i+".q")+">"+ml(it.q)+"</span></p>"
+          +'<p class="qa__a"><span class="qa__mark qa__mark--a">A</span><span'+ed("faq.items."+i+".a")+">"+val(it.a)+"</span></p>"
+          +rm("faq.items",i,"この質問を削除")+"</div>";
+      }).join("")
+    +"</div>"+add("faq.items","質問を追加")+"</div></section>";
+}
+function renderAccess(d){
+  var a=d.access;
+  return '<section class="section wrap" id="access"><p class="eyebrow"'+ed("access.eyebrow")+">"+ml(a.eyebrow)+"</p>"
+    +'<div class="split">'+photo("access.photo",a.photo,"会場の写真")+"<div>"
+    +'<h2 class="section__title"'+ed("access.title")+">"+ml(a.title)+"</h2>"
+    +'<div class="table-scroll"><table class="info"><tbody>'
+    + a.rows.map(function(r,i){
+        return "<tr><th"+ed("access.rows."+i+".label")+">"+ml(r.label)+"</th>"
+          +"<td"+ed("access.rows."+i+".value")+">"+val(r.value)+"</td>"
+          +'<td class="info__act">'+rm("access.rows",i,"✕")+"</td></tr>";
+      }).join("")
+    +"</tbody></table></div>"+add("access.rows","行を追加")
+    +(a.map.href ? '<div class="cta-row" style="margin-top:1.5rem"><a class="btn btn--ghost" href="'+esc(a.map.href)+'" target="_blank" rel="noopener"'+ed("access.map.label")+">"+ml(a.map.label)+"</a></div>" : "")
+    +hrefBox("access.map.href",a.map.href,"Google マップのURL")
+    +"</div></div></section>";
+}
+function renderContact(d){
+  var c=d.contact;
+  return '<section class="section section--surface" id="contact"><div class="wrap"><div class="split">'
+    +'<div><p class="eyebrow"'+ed("contact.eyebrow")+">"+ml(c.eyebrow)+"</p>"
+    +'<h2 class="section__title"'+ed("contact.title")+">"+ml(c.title)+"</h2>"
+    +'<div class="prose">'
+    + c.paras.map(function(p,i){return "<p"+ed("contact.paras."+i)+">"+ml(p)+"</p>";}).join("")
+    +"</div>"
+    +'<div class="cta-row" style="margin-top:1.5rem">'
+    +'<a class="btn btn--solid" href="'+esc(c.cta.href)+'" target="_blank" rel="noopener"'+ed("contact.cta.label")+">"+ml(c.cta.label)+"</a>"
+    +hrefBox("contact.cta.href",c.cta.href,"ボタンのリンク先")+"</div></div>"
+    +'<div><div class="links">'
+    + c.links.map(function(l,i){
+        return '<a class="linkcard" href="'+esc(l.href)+'" target="_blank" rel="noopener">'
+          +'<span class="linkcard__label"'+ed("contact.links."+i+".label")+">"+ml(l.label)+"</span>"
+          +'<span class="linkcard__handle"'+ed("contact.links."+i+".handle")+">"+ml(l.handle)+"</span>"
+          +'<span class="linkcard__desc"'+ed("contact.links."+i+".desc")+">"+ml(l.desc)+"</span></a>"
+          +hrefBox("contact.links."+i+".href",l.href,esc(l.label)+" のリンク先");
+      }).join("")
+    +"</div></div></div></div></section>";
+}
+function renderHost(d){
+  var h=d.host;
+  return '<section class="section wrap" id="host"><div class="measure-wide">'
+    +'<p class="eyebrow"'+ed("host.eyebrow")+">"+ml(h.eyebrow)+"</p>"
+    +'<h2 class="section__title"'+ed("host.title")+">"+ml(h.title)+"</h2>"
+    +'<div class="table-scroll"><table class="info"><tbody>'
+    + h.rows.map(function(r,i){
+        return "<tr><th"+ed("host.rows."+i+".label")+">"+ml(r.label)+"</th>"
+          +"<td"+ed("host.rows."+i+".value")+">"+val(r.value)+"</td>"
+          +'<td class="info__act">'+rm("host.rows",i,"✕")+"</td></tr>";
+      }).join("")
+    +"</tbody></table></div>"+add("host.rows","行を追加")
+    +'<p class="host__note"'+ed("host.note")+">"+ml(h.note)+"</p>"
+    +'<p class="host__link"><a href="'+esc(h.link.href)+'" target="_blank" rel="noopener"'+ed("host.link.label")+">"+ml(h.link.label)+"</a></p>"
+    +hrefBox("host.link.href",h.link.href,"会社サイトのURL")
+    +"</div></section>";
+}
+function renderFoot(d){
+  return '<footer class="site-foot"><div class="wrap site-foot__in">'
+    +'<span class="site-foot__co"'+ed("footer.co")+">"+ml(d.footer.co)+"</span>"
+    +"<span"+ed("footer.tagline")+">"+ml(d.footer.tagline)+"</span>"
+    +"<span"+ed("footer.copyright")+">"+ml(d.footer.copyright)+"</span>"
+    +'<button type="button" class="editlink" data-act="edit">このページを編集する</button>'
+    +"</div></footer>";
+}
+function renderBar(){
+  return '<div class="editbar"><span class="editbar__label">編集モード</span>'
+    +'<span class="editbar__hint">文字をクリックすると直接書き換えられます</span>'
+    +'<span class="editbar__status"></span>'
+    +'<button type="button" class="btn-sm" data-act="cancel">やめる</button>'
+    +'<button type="button" class="btn-sm btn-sm--solid" data-act="save">保存して公開</button></div>';
+}
+function renderAll(d){
+  return '<a id="top"></a>'+renderHead(d)+"<main>"+renderHero(d)+renderNext(d)+renderAbout(d)
+    +renderFaq(d)+renderAccess(d)+renderContact(d)+renderHost(d)+"</main>"+renderFoot(d)+renderBar();
+}
+
+if(typeof document==="undefined"){ globalThis.__PRERENDER__=function(d){return renderAll(d||DEFAULT_DATA);}; return; }
+
+/* ---------- state ---------- */
+var app=document.getElementById("app");
+var data=DEFAULT_DATA, saved=null, editing=false, artifactApi=null;
+var raw=document.getElementById("site-data");
+if(raw&&raw.textContent.trim()){ try{ data=JSON.parse(raw.textContent); }catch(e){} }
+
+function render(){ app.innerHTML=renderAll(data); if(editing) applyEditable(true); }
+
+/* ---------- edit ---------- */
+function applyEditable(on){
+  var nodes=app.querySelectorAll("[data-e]");
+  for(var i=0;i<nodes.length;i++){
+    if(on){ nodes[i].setAttribute("contenteditable","true"); nodes[i].setAttribute("spellcheck","false"); }
+    else nodes[i].removeAttribute("contenteditable");
+  }
+  document.body.classList.toggle("editing",on);
+}
+function syncFromDom(){
+  var nodes=app.querySelectorAll("[data-e]");
+  for(var i=0;i<nodes.length;i++){
+    var n=nodes[i], p=n.getAttribute("data-e");
+    var clone=n.cloneNode(true), kids=clone.querySelectorAll("span[data-e],button,input,label");
+    for(var k=0;k<kids.length;k++) kids[k].remove();
+    setPath(data,p,(clone.innerText||"").replace(/ /g," ").replace(/\n{3,}/g,"\n\n").trim());
+  }
+  var ins=app.querySelectorAll("[data-h]");
+  for(var j=0;j<ins.length;j++) setPath(data,ins[j].getAttribute("data-h"),ins[j].value.trim());
+}
+function enterEdit(){
+  if(editing) return;
+  saved=JSON.stringify(data); editing=true; applyEditable(true); status("");
+}
+function cancelEdit(){
+  if(!editing) return;
+  if(saved) data=JSON.parse(saved);
+  editing=false; document.body.classList.remove("editing"); render(); applyEditable(false);
+}
+function status(msg){ var s=app.querySelector(".editbar__status"); if(s) s.textContent=msg; }
+function busy(on){
+  var b=app.querySelectorAll(".editbar .btn-sm");
+  for(var i=0;i<b.length;i++) b[i].disabled=on;
+}
+
+function buildDocument(d){
+  var style=document.getElementById("page-style").outerHTML;
+  var code=document.getElementById("app-code").outerHTML;
+  var json=JSON.stringify(d).replace(/</g,"\\u003c");
+  return '<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n'
+    +'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+    +"<title>おかえりの食卓<\/title>\n"+FONT_HEAD+"\n"+style+"\n<\/head>\n<body>\n"
+    +'<div id="app">'+renderAll(d)+"<\/div>\n"
+    +'<noscript><p class="noscript">このページの表示には JavaScript が必要です。<\/p><\/noscript>\n'
+    +'<script id="site-data" type="application/json">'+json+"<\/script>\n"+code+"\n<\/body>\n<\/html>";
+}
+
+function save(){
+  syncFromDom(); busy(true); status("保存しています…");
+  if(!artifactApi){ busy(false); status("この画面からは保存できません"); return; }
+  var html;
+  try{ html=buildDocument(data); }catch(e){ busy(false); status("保存に失敗しました"); return; }
+  if(html.length>14000000){ busy(false); status("写真が大きすぎます。1枚減らしてください"); return; }
+  artifactApi.publish(html).then(function(){
+    saved=JSON.stringify(data); status("保存しました");
+    editing=false; document.body.classList.remove("editing"); render(); busy(false);
+  }).catch(function(err){
+    busy(false);
+    var c=err&&err.code;
+    if(c==="not_writer"||c==="not_granted") status("このページを編集する権限がありません");
+    else if(c==="conflict") status("別の画面で更新されました。読み込み直してください");
+    else status("保存できませんでした。もう一度お試しください");
+  });
+}
+
+/* ---------- photos ---------- */
+function loadImage(file){
+  return new Promise(function(res,rej){
+    var url=URL.createObjectURL(file), img=new Image();
+    img.onload=function(){ URL.revokeObjectURL(url); res(img); };
+    img.onerror=function(){ URL.revokeObjectURL(url); rej(new Error("image")); };
+    img.src=url;
+  });
+}
+function encode(img,max,q){
+  var s=Math.min(1,max/Math.max(img.width,img.height));
+  var c=document.createElement("canvas");
+  c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
+  var g=c.getContext("2d");
+  g.imageSmoothingQuality="high";
+  g.drawImage(img,0,0,c.width,c.height);
+  // 透過が使われているときだけ PNG。不透過なら JPEG のほうが桁違いに軽い。
+  var clear=false;
+  try{
+    var px=g.getImageData(0,0,c.width,c.height).data;
+    for(var i=3;i<px.length;i+=4){ if(px[i]<255){ clear=true; break; } }
+  }catch(e){}
+  return clear?c.toDataURL("image/png"):c.toDataURL("image/jpeg",q);
+}
+// 縦に積んだロゴから、上のシンボルだけを正方形で切り出す（ヘッダー用）。
+// 切り分けられない形のロゴなら null を返し、ヘッダーはロゴ全体を使う。
+function deriveMark(img){
+  try{
+    var W=img.width,H=img.height;
+    if(!W||!H) return null;
+    var scan=Math.min(1,480/Math.max(W,H));
+    var sw=Math.max(1,Math.round(W*scan)), sh=Math.max(1,Math.round(H*scan));
+    var c=document.createElement("canvas");
+    c.width=sw; c.height=sh;
+    var g=c.getContext("2d");
+    g.drawImage(img,0,0,sw,sh);
+    var d=g.getImageData(0,0,sw,sh).data;
+    var clear=d[3]<128, bg=[d[0],d[1],d[2]];
+    function ink(x,y){
+      var i=(y*sw+x)*4;
+      if(d[i+3]<128) return false;
+      return clear || Math.abs(d[i]-bg[0])+Math.abs(d[i+1]-bg[1])+Math.abs(d[i+2]-bg[2])>40;
+    }
+    var rows=[],x,y,n;
+    for(y=0;y<sh;y++){ n=0; for(x=0;x<sw;x++) if(ink(x,y)) n++; rows.push(n); }
+    var top=-1;
+    for(y=0;y<sh;y++) if(rows[y]>2){ top=y; break; }
+    if(top<0) return null;
+    var bottom=top, gap=0, limit=Math.max(4,sh*0.02);
+    for(y=top;y<sh;y++){ if(rows[y]>2){ bottom=y; gap=0; } else if(++gap>limit) break; }
+    var bh=bottom-top+1;
+    if(bh<sh*0.2 || bh>sh*0.92) return null;
+    var left=sw, right=0;
+    for(y=top;y<=bottom;y++) for(x=0;x<sw;x++) if(ink(x,y)){ if(x<left)left=x; if(x>right)right=x; }
+    var bw=right-left+1, side=Math.max(bw,bh)/scan;
+    var cx=(left+bw/2)/scan, cy=(top+bh/2)/scan;
+    var o=document.createElement("canvas");
+    o.width=o.height=360;
+    var og=o.getContext("2d");
+    og.imageSmoothingQuality="high";
+    if(!clear){ og.fillStyle="rgb("+bg[0]+","+bg[1]+","+bg[2]+")"; og.fillRect(0,0,360,360); }
+    og.drawImage(img,cx-side/2,cy-side/2,side,side,0,0,360,360);
+    return clear?o.toDataURL("image/png"):o.toDataURL("image/jpeg",.9);
+  }catch(e){ return null; }
+}
+
+/* ---------- list templates ---------- */
+var NEW_ROW={
+  "next.rows":function(){return {label:"項目",value:"内容を記入"};},
+  "about.paras":function(){return "ここに文章を書いてください。";},
+  "about.points":function(){return {icon:"見出し",text:"説明を書いてください。"};},
+  "faq.items":function(){return {q:"質問を書いてください。",a:"答えを記入してください。"};},
+  "access.rows":function(){return {label:"項目",value:"内容を記入"};},
+  "host.rows":function(){return {label:"項目",value:"内容を記入"};}
+};
+
+
+/* ---------- events ---------- */
+app.addEventListener("click",function(e){
+  var t=e.target.closest ? e.target.closest("[data-act],[data-rm],[data-add],[data-clear]") : null;
+  if(!t) return;
+  var act=t.getAttribute("data-act");
+  if(act==="edit"){ e.preventDefault(); enterEdit(); return; }
+  if(act==="cancel"){ cancelEdit(); return; }
+  if(act==="save"){ save(); return; }
+  if(!editing) return;
+  var rmv=t.getAttribute("data-rm");
+  if(rmv){ e.preventDefault(); var parts=rmv.split("|"); syncFromDom(); getPath(data,parts[0]).splice(+parts[1],1); render(); return; }
+  var ad=t.getAttribute("data-add");
+  if(ad){ e.preventDefault(); syncFromDom(); getPath(data,ad).push(NEW_ROW[ad]()); render(); return; }
+  var cl=t.getAttribute("data-clear");
+  if(cl){ e.preventDefault(); syncFromDom(); setPath(data,cl,"");
+    if(cl==="brand.logo") setPath(data,"brand.mark","");
+    render(); return; }
+});
+app.addEventListener("change",function(e){
+  var inp=e.target;
+  if(!inp.getAttribute || !inp.getAttribute("data-file")) return;
+  var p=inp.getAttribute("data-file"), f=inp.files&&inp.files[0];
+  if(!f) return;
+  var isLogo=inp.getAttribute("data-fmt")==="png";
+  status("画像を読み込んでいます…");
+  loadImage(f).then(function(img){
+      syncFromDom();
+      if(isLogo){
+        setPath(data,"brand.logo",encode(img,720,.88));
+        setPath(data,"brand.mark",deriveMark(img)||"");
+      } else {
+        setPath(data,p,encode(img,1600,.82));
+      }
+      render();
+      status("画像を差し替えました。「保存して公開」で確定します");
+    }).catch(function(){ status("この画像は読み込めませんでした"); });
+});
+app.addEventListener("click",function(e){
+  if(editing && e.target.closest && e.target.closest("a")) e.preventDefault();
+},true);
+
+window.addEventListener("beforeunload",function(e){
+  if(!editing) return;
+  syncFromDom();
+  if(saved && saved!==JSON.stringify(data)){ e.preventDefault(); e.returnValue=""; }
+});
+
+/* ---------- boot ---------- */
+render();
+if(window.claude && window.claude.use){
+  window.claude.use("artifact").then(function(api){
+    if(!api) return;
+    artifactApi=api;
+    document.body.classList.add("can-edit");
+    if(location.hash==="#edit") enterEdit();
+  }).catch(function(){});
+}
+})();
+</script>
+</body>
+</html>
