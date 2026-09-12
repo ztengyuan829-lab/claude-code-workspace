@@ -2,7 +2,7 @@
 
 合同会社 Bloom Terra（代表 NAOMI ATSUTA / @naoon_20）のホームページ。
 
-- `site/index.html` — 1ファイル完結。ビルド不要、ブラウザで開けばそのまま表示されます。
+- `index.html` — 1ファイル完結。ビルド不要、ブラウザで開けばそのまま表示されます。
 
 ## 自分で編集する
 
@@ -17,6 +17,25 @@ claude.ai の Artifact として開くと、フッターの「このページを
 - 「やめる」で編集前に戻ります
 
 `#edit` を付けた URL で開くと、最初から編集モードで開きます。
+
+## Vercel で公開する
+
+ビルドは不要です。リポジトリの直下にある `index.html` をそのまま配信します。
+
+1. [vercel.com](https://vercel.com) に GitHub アカウントでログイン
+2. **Add New → Project** → このリポジトリを **Import**
+3. Framework Preset は **Other**、Build Command と Output Directory は空のまま
+4. **Deploy**
+
+以降はこのブランチに push するたび自動で再デプロイされます
+（本番ブランチ = リポジトリの既定ブランチ `claude/affectionate-cori-np4724`）。
+
+独自ドメインは Project → Settings → Domains から追加します。
+
+### 公開サイトと編集の関係
+
+編集は Artifact 版のページ（claude.ai）で行います。公開サイトに反映するには、
+編集後の内容をこのリポジトリの `index.html` に反映して push します。
 
 ## 仕組み
 

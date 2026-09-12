@@ -1,7 +1,7 @@
-// site/index.html の #app に、DEFAULT_DATA から組み立てた初期マークアップを書き出す。
+// index.html の #app に、DEFAULT_DATA から組み立てた初期マークアップを書き出す。
 // app-code を編集したら node tools/prerender.mjs を実行する。
 import fs from 'fs';
-const p = 'site/index.html';
+const p = 'index.html';
 let s = fs.readFileSync(p, 'utf8');
 const m = s.match(/<script id="app-code">\n([\s\S]*?)\n<\/script>/);
 if (!m) { console.error('app-code not found'); process.exit(1); }
