@@ -69,7 +69,7 @@ a{color:inherit}
 .nav a:hover{color:var(--ink);border-color:var(--glow)}
 @media (max-width:700px){.mark__sub{display:none}.nav{display:none}}
 
-.hero{padding-block:clamp(2.5rem,7vw,5rem) var(--band)}
+.hero{padding-block:clamp(1.75rem,4.5vw,3.25rem) var(--band)}
 .hero__grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(2rem,5vw,4rem);align-items:center}
 .eyebrow{font-family:var(--latin);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
   color:var(--ink-soft);display:flex;align-items:center;gap:.8rem;margin:0 0 1.4rem}
@@ -87,8 +87,9 @@ a{color:inherit}
 .btn:hover{transform:translateY(-2px)}
 .btn--ghost:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 
-.lamp{position:relative;aspect-ratio:4/5;border-radius:180px 180px 14px 14px;overflow:hidden;
-  background:linear-gradient(180deg,var(--sky-a),var(--sky-b));box-shadow:var(--shadow);margin:0}
+.lamp{position:relative;aspect-ratio:4/5;width:100%;max-width:23rem;margin:0 0 0 auto;
+  border-radius:180px 180px 14px 14px;overflow:hidden;
+  background:linear-gradient(180deg,var(--sky-a),var(--sky-b));box-shadow:var(--shadow)}
 .lamp__light{position:absolute;inset:8%;border-radius:150px 150px 8px 8px;
   background:radial-gradient(120% 90% at 50% 78%,#F6D6A4 0%,#E9B276 42%,#C98B55 74%,#8C6446 100%);
   animation:breathe 7s ease-in-out infinite}
