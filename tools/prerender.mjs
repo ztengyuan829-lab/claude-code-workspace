@@ -13,5 +13,10 @@ const html = data ? render(JSON.parse(data[1].replace(/\\u003c/g, '<'))) : rende
 const slot = /<div id="app">[\s\S]*?<\/div>\n<noscript>/;
 if (!slot.test(s)) { console.error('#app block not found'); process.exit(1); }
 s = s.replace(slot, '<div id="app">' + html + '</div>\n<noscript>');
+// <title> から Google Fonts の手前までが headMeta() の出力。検索・シェア用の説明文もデータに合わせる。
+const d = data ? JSON.parse(data[1].replace(/\\u003c/g, '<')) : undefined;
+const head = /^<title>[\s\S]*?(?=<link rel="preconnect")/m;
+if (!head.test(s)) { console.error('head block not found'); process.exit(1); }
+s = s.replace(head, () => render.head(d));
 fs.writeFileSync(p, s);
 console.log('prerendered', html.length, 'chars');
