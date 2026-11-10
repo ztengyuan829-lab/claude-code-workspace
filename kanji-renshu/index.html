@@ -1,0 +1,112 @@
+<title>漢字の練習 四年生</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap">
+<style>
+/* Layout: the school's vertical worksheet — 5 bands of 10 columns, read right-to-left; kanji become blank boxes with furigana */
+:root {
+  --paper: #f7f3e6;
+  --sheet: #fffdf6;
+  --ink: #2a2620;
+  --muted: #7a7162;
+  --rule: #b9ad94;
+  --box: #5b5243;
+  --answer: #c0392b;
+  --accent: #2f6b5a;
+  --f-hand: "Klee One", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --f-ui: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b1a17; --sheet: #24221e; --ink: #ece6d8; --muted: #a39a88;
+    --rule: #5a5446; --box: #c9bfa9; --answer: #ff8a7a; --accent: #7cc4ad; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b1a17; --sheet: #24221e; --ink: #ece6d8; --muted: #a39a88;
+  --rule: #5a5446; --box: #c9bfa9; --answer: #ff8a7a; --accent: #7cc4ad; color-scheme: dark;
+}
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--f-ui);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 40px;
+}
+.wrap { max-width: 900px; margin: 0 auto; display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; }
+h1 { font-family: var(--f-hand); font-weight: 600; font-size: 1.9rem; margin: 0; letter-spacing: .08em; }
+.sub { color: var(--muted); font-size: .85rem; margin: 4px 0 0; }
+.toggle {
+  font: 700 .9rem var(--f-ui); border: 1.5px solid var(--accent); color: var(--accent);
+  background: transparent; border-radius: 999px; padding: 8px 16px; cursor: pointer;
+}
+.toggle[aria-pressed="true"] { background: var(--accent); color: var(--sheet); }
+.toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.sheet { background: var(--sheet); border: 1.5px solid var(--rule); overflow-x: auto; }
+.band {
+  display: grid; grid-template-columns: repeat(10, minmax(62px, 1fr));
+  direction: rtl; border-bottom: 1.5px solid var(--rule); min-width: 620px;
+}
+.band:last-child { border-bottom: 0; }
+.cell {
+  direction: ltr; writing-mode: vertical-rl; border-left: 1px solid var(--rule);
+  padding: 14px 0 8px; min-height: 290px; display: flex; align-items: center;
+  justify-content: space-between; font-family: var(--f-hand);
+}
+.band .cell:last-child { border-left: 0; }
+.word { font-size: 1.55rem; line-height: 2.4; }
+.word rt { font-size: .5em; color: var(--ink); letter-spacing: .05em; }
+.box {
+  display: inline-block; width: 1.25em; height: 1.25em; border: 1.5px solid var(--box);
+  margin-block: .08em; text-align: center; line-height: 1.15em; vertical-align: middle;
+  color: transparent; font-weight: 600;
+}
+.answers .box { color: var(--answer); }
+.num { font: 500 .7rem var(--f-ui); color: var(--muted); writing-mode: horizontal-tb; font-variant-numeric: tabular-nums; }
+.note { color: var(--muted); font-size: .8rem; margin: 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>漢字の練習</h1>
+      <p class="sub">四年生 国語　入試期間の宿題　★入試明けの三十問たしかめは、この中から出題します。</p>
+    </div>
+    <button class="toggle" id="toggle" type="button" aria-pressed="false">答えを表示</button>
+  </header>
+  <div class="sheet" id="sheet"></div>
+  <p class="note">右の列から上から下へ読みます。□に漢字を書きましょう。</p>
+</div>
+
+<script>
+// [漢字, よみ] は空欄、文字列は送りがな
+const W = [
+  [["氏名","しめい"]],[["良薬","りょうやく"]],[["節約","せつやく"]],[["徳島","とくしま"]],[["鹿児島","かごしま"]],
+  [["栄養","えいよう"]],[["入浴","にゅうよく"]],[["半径","はんけい"]],[["競","きそ"],"う"],[["養","やしな"],"う"],
+  [["祝日","しゅくじつ"]],[["徒歩","とほ"]],[["付録","ふろく"]],[["香川","かがわ"]],[["沖縄","おきなわ"]],
+  [["満足","まんぞく"]],[["欠席","けっせき"]],[["家臣","かしん"]],[["清","きよ"],"い"],[["満","み"],"たす"],
+  [["銀貨","ぎんか"]],[["競輪","けいりん"]],[["清書","せいしょ"]],[["愛媛","えひめ"]],[["王佐","おうさ"]],
+  [["命令","めいれい"]],[["卒園式","そつえんしき"]],[["副会長","ふくかいちょう"]],[["熱","あつ"],"い"],[["浴","あ"],"びる"],
+  [["楽器","がっき"]],[["発芽","はつが"]],[["滋賀","しが"]],[["宮崎","みやざき"]],[["熱気球","ねつききゅう"]],
+  [["定位置","ていいち"]],[["単品","たんぴん"]],[["商店街","しょうてんがい"]],[["働","はたら"],"く"],[["欠","か"],"ける"],
+  [["試験官","しけんかん"]],[["梅雨前線","ばいうぜんせん"]],[["大阪","おおさか"]],[["熊本","くまもと"]],[["働","はたら"],"き",["口","ぐち"]],
+  [["漁業","ぎょぎょう"]],[["結果","けっか"]],[["灯油","とうゆ"]],[["栄","さか"],"える"],[["果","は"],"たす"],
+];
+const sheet = document.getElementById("sheet");
+for (let b = 0; b < 5; b++) {
+  const band = document.createElement("div");
+  band.className = "band";
+  for (let i = 0; i < 10; i++) {
+    const n = b * 10 + i;
+    const html = W[n].map(p => typeof p === "string" ? p :
+      `<ruby>${[...p[0]].map(k => `<span class="box">${k}</span>`).join("")}<rt>${p[1]}</rt></ruby>`).join("");
+    band.insertAdjacentHTML("beforeend", `<div class="cell"><span class="word">${html}</span><span class="num">${n + 1}</span></div>`);
+  }
+  sheet.appendChild(band);
+}
+const t = document.getElementById("toggle");
+t.addEventListener("click", () => {
+  const on = sheet.classList.toggle("answers");
+  t.setAttribute("aria-pressed", on);
+  t.textContent = on ? "答えをかくす" : "答えを表示";
+});
+</script>
