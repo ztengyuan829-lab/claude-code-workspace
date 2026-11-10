@@ -63,6 +63,22 @@ h1 { font-family: var(--f-hand); font-weight: 600; font-size: 1.9rem; margin: 0;
 .answers .box { color: var(--answer); }
 .num { font: 500 .7rem var(--f-ui); color: var(--muted); writing-mode: horizontal-tb; font-variant-numeric: tabular-nums; }
 .note { color: var(--muted); font-size: .8rem; margin: 0; }
+.name { display: none; }
+@page { size: A4 portrait; margin: 12mm; }
+@media print {
+  :root, :root[data-theme] { --paper:#fff; --sheet:#fff; --ink:#000; --muted:#555; --rule:#333; --answer:#c0392b; color-scheme: light; }
+  body { padding: 0; }
+  .wrap { max-width: none; gap: 4mm; }
+  .toggle, .note { display: none; }
+  h1 { font-size: 20pt; }
+  .sub { font-size: 8.5pt; }
+  .name { display: block; font: 11pt var(--f-hand); border-bottom: 1px solid #000; min-width: 60mm; padding-bottom: 1mm; }
+  .sheet { overflow: visible; border-width: 1.2pt; }
+  .band { min-width: 0; grid-template-columns: repeat(10, 1fr); }
+  .cell { min-height: 0; height: 43mm; padding: 3mm 0 1.5mm; }
+  .word { font-size: 18pt; }
+  .num { font-size: 7pt; }
+}
 </style>
 
 <div class="wrap">
@@ -71,6 +87,7 @@ h1 { font-family: var(--f-hand); font-weight: 600; font-size: 1.9rem; margin: 0;
       <h1>漢字の練習</h1>
       <p class="sub">四年生 国語　入試期間の宿題　★入試明けの三十問たしかめは、この中から出題します。</p>
     </div>
+    <div class="name">氏名</div>
     <button class="toggle" id="toggle" type="button" aria-pressed="false">答えを表示</button>
   </header>
   <div class="sheet" id="sheet"></div>
