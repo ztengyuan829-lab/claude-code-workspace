@@ -97,8 +97,7 @@ for (let b = 0; b < 5; b++) {
   band.className = "band";
   for (let i = 0; i < 10; i++) {
     const n = b * 10 + i;
-    const html = W[n].map(p => typeof p === "string" ? p :
-      [...p[0]].map(k => `<span class="box">${k}</span>`).join("")).join("");
+    const html = W[n].map(p => [...(typeof p === "string" ? p : p[0])].map(k => `<span class="box">${k}</span>`).join("")).join("");
     band.insertAdjacentHTML("beforeend", `<div class="cell"><span class="word">${html}</span><span class="num">${n + 1}</span></div>`);
   }
   sheet.appendChild(band);
